@@ -46,7 +46,7 @@ function basenxt {
 		echo ""
 		echo "..:: Installation via GIT ::.."
 		echo ""
-    elif [[ $1 == "-gitbr" ]]; then
+	elif [[ $1 == "-gitbr" ]]; then
 		echo ""
 		echo "..:: Changement de branche via GIT ::.."
 		echo ""
@@ -74,6 +74,7 @@ if [[ $1 == "-git" ]]; then
 	git clone  https://github.com/NextDom/nextdom-core .
 	git config core.fileMode false
 	./install/postinst
+	systemctl daemon-reload
 fi
 
 if [[ $1 == "-apt" ]]; then
