@@ -6,6 +6,7 @@
 #2019-11-26 : v1.5 : correction de l'ordre d'installation des dépendances.
 #2019-11-25 : v1.3 : ajout dépôt pour install git + clé
 
+
 if [[ $1 == "" ]]; then
     echo
     echo " Usage: "$0" [-git] installation de NextDom via GitClone"
@@ -16,6 +17,10 @@ if [[ $1 == "" ]]; then
     echo
 fi
 
+### VARIABLE ###
+OS=$(grep -oP '(?<=^ID=).+' /etc/os-release | tr -d '"')
+
+### FONCTIONS ###
 function cleanfld {
     rm -Rf /var/log/nextdom* 2>/dev/null
     echo "Dossier /var/log/nextdom* supprimé"
@@ -44,7 +49,7 @@ function basenxt {
 
 	if [[ $1 == "-git" ]]; then
 		echo ""
-		echo "..:: Installation via GIT ::.."
+		echo "..:: Installation via GIT sur $OS ::.."
 		echo ""
 	elif [[ $1 == "-gitbr" ]]; then
 		echo ""
@@ -52,13 +57,17 @@ function basenxt {
 		echo ""
 	else
 		echo ""
-		echo "..:: Installation via APT ::.."
+		echo "..:: Installation via APT sur $OS ::.."
 		echo ""
 	fi
 
 	apt update
 	apt install -y software-properties-common gnupg wget ca-certificates
-	sed '/non-free/!s/main/main non-free/' /etc/apt/sources.list
+	if [[ $OS == "raspberry" ]]; then
+		sed '/non-free/!s/main/main non-free/' /etc/apt/sources.list
+	else
+		add-apt-repository non-free
+	fi
 	wget -qO -  http://debian.nextdom.org/debian/nextdom.gpg.key  | apt-key add -
 	echo "deb  http://debian.nextdom.org/debian  nextdom main" >/etc/apt/sources.list.d/nextdom.list
 	apt update
